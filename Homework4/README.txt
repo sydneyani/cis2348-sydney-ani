@@ -5,8 +5,7 @@
 
 #12-7 - Heart Rate Calculator
 
-This code is a simple heart rate calculator based on age. It determines the fat-burning heart rate for a person with a given age. Here's what each part does
-Additionally, it prints a message indicating that the heart rate calculation couldn't be performed. With this code you can calculate the fat-burning heart rate and receive friendly feedback if they provide an invalid age. 
+This code is a simple heart rate calculator based on age. It determines the fat-burning heart rate for a person with a given age. Additionally, it prints a message indicating that the heart rate calculation couldn't be performed. With this code you can calculate the fat-burning heart rate and receive friendly feedback if you provide an invalid age. 
 
 
 #12-9 - Age Incrementer
@@ -19,4 +18,6 @@ This code allows users to input names and ages. It increments the ages by 1 and 
 The provided code demonstrates the step-by-step process of sorting a list of numbers in descending order using the selection sort algorithm. The code takes a list of numbers as input, performs the sorting, and then prints the intermediate steps of the sorting process until the list is sorted in descending order.
 
 
-#14-13 -
+#14-13 -Quicksort Algorithm with Call Counter
+
+This code implements the quicksort sorting algorithm to sort a list of user IDs in ascending order. Additionally, it keeps track of the number of recursive calls made to the quicksort function and prints the total count of these calls after the sorting process is complete. Finally, the code outputs the sorted user IDs in ascending order.

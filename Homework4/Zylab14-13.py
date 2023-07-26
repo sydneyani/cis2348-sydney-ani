@@ -1,6 +1,6 @@
 #Sydney Ani PID:1869076
 
-# Global variable
+# Assign a global variable
 num_calls = 0
 
 def partition(user_ids, i, k):

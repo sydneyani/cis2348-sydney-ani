@@ -14,14 +14,13 @@ class Item:
         self.is_damaged = is_damaged
 
 # Allowing for the csv files to be read
-def read_csv(file_path):
+def read_csv(file_path, delimiter=','):  #Added a parameter to specify the delimiter
     data = {}
     with open(file_path, 'r') as file:
-        reader = csv.reader(file)
-        next(reader)
+        reader = csv.reader(file, delimiter=delimiter)  # Use the specified delimiter
         for row in reader:
             item_id = row[0]
-            data[item_id] = row[1:]
+            data[item_id] = [col.strip() for col in row[1:]]  # Remove leading/trailing whitespace
     return data
 
 # Custom comparison function for sorting by manufacturer
@@ -57,44 +56,50 @@ def process_inventory():
             is_damaged = manufacturer[2] if len(manufacturer) > 2 else ''
             inventory[item_id] = Item(item_id, manufacturer[0], item_type, price, service_date, is_damaged)
 
-    # Generate FullInventory.csv
-    sorted_inventory = sorted(inventory.values(), key=sort_by_manufacturer)
-    with open('FullInventory.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Item ID', 'Manufacturer', 'Item Type', 'Price', 'Service Date', 'Damaged'])
-        for item in sorted_inventory:
-            writer.writerow([item.item_id, item.manufacturer, item.item_type, item.price, item.service_date, item.is_damaged])
+   # Call the interactive query function
+    interactive_query(inventory)
 
-    # Generate LaptopInventory.csv
-    item_types = set(item.item_type for item in inventory.values())
-    for item_type in item_types:
-        items_of_type = [item for item in inventory.values() if item.item_type == item_type]
-        items_of_type_sorted = sorted(items_of_type, key=sort_by_item_id)
-        file_name = f'{item_type}Inventory.csv'
-        with open(file_name, 'w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(['Item ID', 'Manufacturer', 'Price', 'Service Date', 'Damaged'])
-            for item in items_of_type_sorted:
-                writer.writerow([item.item_id, item.manufacturer, item.price, item.service_date, item.is_damaged])
+def interactive_query(inventory):
+    while True:
+        manufacturer = input("Enter the manufacturer (or 'q' to quit): ").strip().lower()
+        if manufacturer == 'q':
+            break
 
-    # Generate PastServiceDateInventory.csv
-    past_service_date_items = [item for item in inventory.values() if item.service_date < '2023-07-18']
-    past_service_date_items_sorted = sorted(past_service_date_items, key=sort_by_service_date)
-    with open('PastServiceDateInventory.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Item ID', 'Manufacturer', 'Item Type', 'Price', 'Service Date', 'Damaged'])
-        for item in past_service_date_items_sorted:
-            writer.writerow([item.item_id, item.manufacturer, item.item_type, item.price, item.service_date, item.is_damaged])
+        item_type = input("Enter the item type: ").strip().lower()  # Strip whitespace from item type
 
-    # Generate DamagedInventory.csv
-    damaged_items = [item for item in inventory.values() if item.is_damaged]
-    damaged_items_sorted = sorted(damaged_items, key=sort_by_price, reverse=True)
-    with open('DamagedInventory.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Item ID', 'Manufacturer', 'Item Type', 'Price', 'Service Date'])
-        for item in damaged_items_sorted:
-            writer.writerow([item.item_id, item.manufacturer, item.item_type, item.price, item.service_date])
+        # Find matching items in the inventory (converted the input to lowercase and stripped whitespace for exact matching)
+        matching_items = [item for item in inventory.values() if
+                          item.manufacturer.lower() == manufacturer and item.item_type.lower() == item_type
+                          and not item.is_damaged and item.service_date >= '2023-07-18']
 
-process_inventory()
+        if not matching_items:
+            print("No such item in inventory")
+        else:
+            # Sort by price in descending order
+            matching_items.sort(key=sort_by_price, reverse=True)
 
-# Code finished and ready to generate outputs
+            # Output the most expensive item
+            expensive_item = matching_items[0]
+            print("Your item is: Item ID: {}, Manufacturer: {}, Item Type: {}, Price: {}".format(
+                expensive_item.item_id, expensive_item.manufacturer, expensive_item.item_type, expensive_item.price
+            ))
+
+            # Find items from another manufacturer with the closest price
+            other_manufacturer_items = [item for item in inventory.values() if
+                                        item.manufacturer.lower() != manufacturer and item.item_type.lower().strip() == item_type
+                                        and not item.is_damaged and item.service_date >= '2023-07-18']
+
+            if other_manufacturer_items:
+                # Sort by price in ascending order
+                other_manufacturer_items.sort(key=sort_by_price)
+                closest_price_item = other_manufacturer_items[0]
+                print("You may, also, consider: Item ID: {}, Manufacturer: {}, Item Type: {}, Price: {}".format(
+                    closest_price_item.item_id, closest_price_item.manufacturer,
+                    closest_price_item.item_type, closest_price_item.price
+                ))
+
+def main():
+    process_inventory()
+
+if __name__ == "__main__":
+    main()

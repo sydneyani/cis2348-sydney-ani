@@ -7,7 +7,7 @@ The input file allows my code to bring in and read the certain input csv files w
 
 
 Output file:
-The output file allows my code to read the class I made in the index file, brings in and reads the input file I created in the input file and lastly produces a code below all of that to generate specific outputs to each csv output that was given to us by you.
+The output file allows my code to read the class I made in the index file, brings in and reads the input file I created in the input file and lastly produces a manual entry code to allow for the entering of manufacturer and item type to search for whatever is in inventory of the csv files that are given to us from you.
 
 
 Hope you like it, thank you!
